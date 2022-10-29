@@ -3,23 +3,17 @@
 // PUT - atualizar/alterar/
 // DELETE - apagar/deletar/destruir/remover/aniquilar
 
-let descendente = "0"
-function trocarOrdem2() {
-    if (descendente === 1) {
-        descendente = "0"
-    } else {
-        descendente = "1"
-    }
-    atualizarContatos()
-}
 let ascendente = "1"
 function trocarOrdem() {
     if (ascendente === 0) {
-        ascendente = "1"
-    } else {
         ascendente = "0"
     }
+    else {
+        ascendente = "0"
+        localStorage.setItem("ordem", 'acs')
+    }
     atualizarContatos()
+    localStorage.setItem("ordem", 'asc')
 }
 
 async function addContato() {
@@ -68,6 +62,7 @@ async function atualizar(identificador) {
 
 atualizarContatos();
 
+
 async function atualizarContatos() {
     let resposta = await fetch('https://633867b7937ea77bfdbf9c86.mockapi.io/pessoa3')
     let body = await resposta.json();
@@ -80,8 +75,7 @@ async function atualizarContatos() {
     tarefas.innerHTML = "<ul>";
     body.forEach(pessoa => {
         tarefas.innerHTML += ` 
-        <li><i class="bi bi-star" onclick="favoritar"(${pessoa.id})></i>
-        <i class="bi bi-star-fill"></i>
+        <li>
         ${pessoa.nome} - ${pessoa.idade} 
             <button onclick="deletar(${pessoa.id})"><i class="bi bi-trash-fill"></i></button>
             <button onclick="atualizar(${pessoa.id})"><i class="bi bi-pencil-fill"></i></button>
@@ -90,19 +84,20 @@ async function atualizarContatos() {
     tarefas.innerHTML += "</ul>"
 }
 
-let listaDeFavoritos = [];
+let listaDeFavorito = [];
 function favoritar(id) {
-    listaDeFavoritos.push(id)
-    listaDeFavoritos = [... new Set(listaDeFavoritos)];
-    console.log(listaDeFavoritos)
-
-    function isFavorito(id){
-        return listaDeFavoritos.indexOf(id) 
-    }
+    listaDeFavorito.push(id)
+    listaDeFavorito = [... new Set(listaDeFavorito)];
+    atualizarContatos();
 }
+
 function desfavoritar(id) {
-    listadecontatos = listaDeFavoritos.filter((elemento) => elemento !== id);
-    console.log(listaDeFavoritos);
+    listaDeFavorito = listaDeFavorito.filter((elemento) => elemento !== id);
+    atualizarContatos();
+}
+
+function isFavorito(id) {
+    return listaDeFavorito.indexOf(id) >= 0;
 }
 
 async function deletar(identificador) {
@@ -114,4 +109,18 @@ async function deletar(identificador) {
     } else {
         console.log(res.statusText)
     }
+}
+function logar() {
+    if (login.value && senha.value) {
+        console.log('SUCESSO');
+    }
+    if (login.value === 'login' && senha.value === "senha") {
+        localStorage.setItem("status", 'logado');
+        window.location.replace("home.html")
+    };
+}
+function deslogar() {
+    localStorage.setItem("status", 'deslogado')
+    window.location.replace("./login.html")
+
 }
